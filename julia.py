@@ -1,4 +1,4 @@
-# main file, ver 0.01
+# main file, ver 1.00
 
 import Gui
 from PySide6.QtWidgets import QApplication
@@ -10,5 +10,5 @@ if __name__ == "__main__":
     gui = Gui.Main_window()
     gui.show()
     app.exec_()
-    
+    sys.exit(0)
     
