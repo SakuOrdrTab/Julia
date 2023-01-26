@@ -1,7 +1,10 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, \
 QHBoxLayout, QLabel, QToolBar, QFrame
-from PySide6.QtGui import QPalette, QColor
+from PySide6.QtGui import QPalette, QColor, QImage
 from PySide6.QtCore import Qt
+
+import fractal_math
+    
 
 class Toolbar(QWidget):
     
@@ -20,6 +23,17 @@ class Toolbar(QWidget):
         self.setLayout(toolbar_layout)
         return None
     
+class Fractal_pic(QImage):
+# qImg = QtGui.QImage(normal.data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)(
+    def __init__(self, passmap):
+        super().__init__()
+        self.image = QImage(passmap, len(passmap), len(passmap[0]), 64, QImage.Format_RGB888)
+        
+    def show(self):
+        self.image.show()
+        
+
+    
 class Main_window(QMainWindow):
 
     def __init__(self):
@@ -32,6 +46,10 @@ class Main_window(QMainWindow):
         window_layout.addWidget(QLabel("AAAAAAA")) # test stuff
         window_layout.addWidget(QLabel("BBBBBBB"))
         window_layout.addWidget(QLabel("CCCCCCC"))
+        
+        cplane = fractal_math.Complex_plane()
+        image = Fractal_pic(cplane.pass_map())
+        window_layout.addWidget(image)
         
         widget = QWidget() # add widget to contain all stuff in main window
         widget.setLayout(window_layout)
