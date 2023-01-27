@@ -47,7 +47,7 @@ class Complex_plane():
             for cnumber in cplane_line:
                 newline.append(iters_passed(cnumber))
             result.append(newline)
-        return result 
+        return np.array(result, dtype="uint8") 
 
 
 

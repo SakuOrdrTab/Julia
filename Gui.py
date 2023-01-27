@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, \
 QHBoxLayout, QLabel, QToolBar, QFrame
-from PySide6.QtGui import QPalette, QColor, QImage
+from PySide6.QtGui import QPalette, QColor, QImage, QPixmap
 from PySide6.QtCore import Qt
 
 import fractal_math
@@ -23,14 +23,20 @@ class Toolbar(QWidget):
         self.setLayout(toolbar_layout)
         return None
     
-class Fractal_pic(QImage):
+class Fractal_pic(QLabel):
 # qImg = QtGui.QImage(normal.data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)(
     def __init__(self, passmap):
         super().__init__()
-        self.image = QImage(passmap, len(passmap), len(passmap[0]), 64, QImage.Format_RGB888)
+        # self.image = QImage(passmap, len(passmap), len(passmap[0]), 64, QImage.Format_RGB888)
         
-    def show(self):
-        self.image.show()
+        qImg = QImage(passmap, len(passmap), len(passmap[0]), 64, QImage.Format_RGB888)
+        pixmap01 = QPixmap.fromImage(qImg)
+        pixmap_image = QPixmap(pixmap01)
+        self.setPixmap(pixmap_image)
+        self.setAlignment(Qt.AlignCenter)
+        self.setScaledContents(True)
+        self.setMinimumSize(100,100)
+        self.show()
         
 
     
@@ -48,8 +54,8 @@ class Main_window(QMainWindow):
         window_layout.addWidget(QLabel("CCCCCCC"))
         
         cplane = fractal_math.Complex_plane()
-        image = Fractal_pic(cplane.pass_map())
-        window_layout.addWidget(image)
+        fractal_image = Fractal_pic(cplane.pass_map())
+        window_layout.addWidget(fractal_image)
         
         widget = QWidget() # add widget to contain all stuff in main window
         widget.setLayout(window_layout)
