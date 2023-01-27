@@ -1,7 +1,8 @@
 import numpy as np
+# some renaming problems..
 
 def iters_passed(c: np.complex128) -> int:
-    # f = c * c + z ;mandelbrot
+    # f = c * c + z ; mandelbrot
     z = np.complex128(0 + 0j)
     if c == (0 + 0j):
         return 0
