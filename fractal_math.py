@@ -9,16 +9,16 @@ def iters_passed(c: np.complex128) -> int:
         c (np.complex128): Complex parameter for fractal function
 
     Returns:
-        int: number of passes before iters > 4
+        int: number of passes before iters > 100
     """    
     # f = c * c + z ; mandelbrot
-    z = np.complex128(0 + 0j)
+    z = np.complex128(0.25 + 0.00j)
     if c == (0 + 0j):
         return 0
     else:
         current = c
         for i in range(0, 256):
-            if abs(current) <= 4:
+            if abs(current) <= 100:
                 current = current**2 + z
             else:
                 return i
