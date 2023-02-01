@@ -92,8 +92,8 @@ class Complex_plane():
             numpy 2d array of uint8: 2d numpy array of passes, 0 .. 255
         """
         result = np.empty(shape=self.complex_array.shape, dtype="uint8")
-        for y, x in np.ndindex(self.complex_array.shape):
-            result[y, x] = iters_passed(self.complex_array[y, x])
+        for (y, x), complex in np.ndenumerate(self.complex_array):
+            result[y, x] = iters_passed(complex)
         return result
     
     def pass_map2(self):
