@@ -68,7 +68,19 @@ class Main_window(QMainWindow):
         # window_layout.addWidget(QLabel("CCCCCCC"))
         
         cplane = fractal_math.Complex_plane() # complex plane for math, numpy 2d array
+        
+        import time
+        # timeit for numpy:
+        start = time.time()
         fractal_image = Fractal_QLabel(cplane.pass_map()) # 2d numpy array of passes
+        end = time.time()
+        print("Time for numpy array iterations: ", end-start)
+        # timeit for python list 2d
+        start = time.time()
+        fractal_image = Fractal_QLabel(cplane.pass_map2())
+        end = time.time()
+        print("Time for Python array iterations: ", end-start)
+        
         window_layout.addWidget(fractal_image) # QLabel child class containing fractal image
         
         widget = QWidget() # add widget to contain all stuff in main window

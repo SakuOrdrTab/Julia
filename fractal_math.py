@@ -18,7 +18,7 @@ def iters_passed(c: np.complex128) -> int:
     else:
         current = c
         for i in range(0, 256):
-            if abs(current) <= 100:
+            if abs(current) <= 2:
                 current = current**2 + z
             else:
                 return i
@@ -87,17 +87,23 @@ class Complex_plane():
     
     def pass_map(self):
         """returns a 2d numpy array of passes that complex plane points iterate with the fractal function
-
+        Now implemented in numpy.
         Returns:
             numpy 2d array of uint8: 2d numpy array of passes, 0 .. 255
-        """        
+        """
+        result = np.empty(shape=self.complex_array.shape, dtype="uint8")
+        for y, x in np.ndindex(self.complex_array.shape):
+            result[y, x] = iters_passed(self.complex_array[y, x])
+        return result
+    
+    def pass_map2(self):
+        # old code, for testing purposes   
         result = []
         for cplane_line in self.complex_array:
             newline = []
             for cnumber in cplane_line:
                 newline.append(iters_passed(cnumber))
             result.append(newline)
-        return np.array(result, dtype="uint8") 
-
+        return np.array(result, dtype="uint8")
 
 
