@@ -109,13 +109,16 @@ class Complex_plane():
     def pass_map_coloured(self, palette):
         """Colour version
         """
-        x, y = self.complex_array.shape
-        new_shape = (x, y, 4)
-        result = np.empty(shape=new_shape, dtype="uint8")
-        print(result.shape)
+        # x, y = self.complex_array.shape
+        # new_shape = (x, y, 4)
+        result = np.empty(shape=self.complex_array.shape, dtype=np.uint32)
         for (y, x), complex in np.ndenumerate(self.complex_array):
             color = palette.get_color(iters_passed(complex))
-            result[y, x] = (color.red(), color.green(), color.blue(), 255)
+            # color is 0xRRGGBBAA in hex?
+            result[y, x] = color.red() * 256 * 256 * 256 + \
+                            color.green() * 256 * 256 + \
+                            color.blue() * 256 + \
+                            255
         return result
 
 
