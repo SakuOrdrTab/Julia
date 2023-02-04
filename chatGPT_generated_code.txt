@@ -1,0 +1,31 @@
+chatGPT generated code:
+
+import numpy as np
+from PySide6.QtGui import QImage, QColor
+from PySide6.QtWidgets import QApplication, QLabel
+
+def mandelbrot(x, y, max_iter):
+    c = x + 1j * y
+    z = c
+    for n in range(max_iter):
+        if abs(z) > 2:
+            return n
+        z = z * z + c
+    return max_iter
+
+def create_fractal(width, height, xmin, xmax, ymin, ymax, max_iter):
+    image = QImage(width, height, QImage.Format_RGB32)
+    for x in range(width):
+        for y in range(height):
+            zx = x * (xmax - xmin) / (width - 1) + xmin
+            zy = y * (ymax - ymin) / (height - 1) + ymin
+            color = mandelbrot(zx, zy, max_iter)
+            image.setPixelColor(x, y, QColor(color % 8 * 32, color % 16 * 16, color % 32 * 8))
+    return image
+
+if __name__ == '__main__':
+    app = QApplication()
+    label = QLabel()
+    label.setPixmap(create_fractal(800, 600, -2, 1, -1, 1, 256).scaled(800, 600))
+    label.show()
+    app.exec_()
