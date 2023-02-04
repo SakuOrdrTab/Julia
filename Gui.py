@@ -4,6 +4,7 @@ from PySide6.QtGui import QPalette, QColor, QImage, QPixmap
 from PySide6.QtCore import Qt
 
 import fractal_math
+import fractal_palette
 
 class Toolbar(QWidget):
     """Toolbar class (QWidget) for creating a toolbar on the top of GUI
@@ -35,7 +36,8 @@ class Fractal_QLabel(QLabel):
         super().__init__()
         
         # print(passmap.shape)
-        qImg = QImage(passmap, len(passmap[0]), len(passmap), len(passmap[0]),  QImage.Format_Grayscale8)
+        # old grayscale: qImg = QImage(passmap, len(passmap[0]), len(passmap), len(passmap[0]),  QImage.Format_Grayscale8)
+        qImg = QImage(passmap, len(passmap[0]), len(passmap), len(passmap[0]),  QImage.Format_RGB32)
         # qImg = QImage("Fractal_05.jpg") # testpic works
         pixmap01 = QPixmap.fromImage(qImg)
         pixmap_image = QPixmap(pixmap01)
@@ -57,6 +59,8 @@ class Main_window(QMainWindow):
         super().__init__()
         self.setWindowTitle("Julia")
         
+        self.palette = fractal_palette.Fractal_palette() # palette for fractal
+        
         # Set all objects in Mainwindow: toolbar, fractal image
         window_layout = QVBoxLayout() # Vertical Box layout
         
@@ -69,17 +73,17 @@ class Main_window(QMainWindow):
         
         cplane = fractal_math.Complex_plane() # complex plane for math, numpy 2d array
         
-        import time
-        # time it for numpy:
-        start = time.time()
-        fractal_image = Fractal_QLabel(cplane.pass_map()) # 2d numpy array of passes
-        end = time.time()
-        print("Time for numpy array iterations: ", end-start)
-        # time it for python list 2d
-        start = time.time()
-        fractal_image = Fractal_QLabel(cplane.pass_map2())
-        end = time.time()
-        print("Time for Python array iterations: ", end-start)
+        # import time
+        # # time it for numpy:
+        # start = time.time()
+        fractal_image = Fractal_QLabel(cplane.pass_map_coloured(self.palette)) # 2d numpy array of passes
+        # end = time.time()
+        # print("Time for numpy array iterations: ", end-start)
+        # # time it for python list 2d
+        # start = time.time()
+        # fractal_image = Fractal_QLabel(cplane.pass_map2())
+        # end = time.time()
+        # print("Time for Python array iterations: ", end-start)
         
         window_layout.addWidget(fractal_image) # QLabel child class containing fractal image
         

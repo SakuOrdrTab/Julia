@@ -1,5 +1,5 @@
 import numpy as np
-# some renaming problems..
+import fractal_palette
 
 def iters_passed(c: np.complex128) -> int:
     """Returns number of iterations passed (= belongs to the Mandelbrot set). Currently func = c * c + Z,
@@ -105,5 +105,17 @@ class Complex_plane():
                 newline.append(iters_passed(cnumber))
             result.append(newline)
         return np.array(result, dtype="uint8")
+    
+    def pass_map_coloured(self, palette):
+        """Colour version
+        """
+        x, y = self.complex_array.shape
+        new_shape = (x, y, 4)
+        result = np.empty(shape=new_shape, dtype="uint8")
+        print(result.shape)
+        for (y, x), complex in np.ndenumerate(self.complex_array):
+            color = palette.get_color(iters_passed(complex))
+            result[y, x] = (color.red(), color.green(), color.blue(), 255)
+        return result
 
 
