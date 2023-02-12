@@ -37,8 +37,9 @@ class Fractal_QLabel(QLabel):
         
         # print(passmap.shape)
         # old grayscale: qImg = QImage(passmap, len(passmap[0]), len(passmap), len(passmap[0]),  QImage.Format_Grayscale8)
-        qImg = QImage(passmap, len(passmap[0]), len(passmap), len(passmap[0]),  QImage.Format_ARGB32)
+        # qImg = QImage(passmap, len(passmap[0]), len(passmap), len(passmap[0]),  QImage.Format_ARGB32)
         # qImg = QImage("Fractal_05.jpg") # testpic works
+        qImg = QImage(passmap, len(passmap[0]), len(passmap), len(passmap[0]),  QImage.Format_RGB888)
         
         pixmap01 = QPixmap.fromImage(qImg)
         pixmap_image = QPixmap(pixmap01)
