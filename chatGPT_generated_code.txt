@@ -1,4 +1,4 @@
-chatGPT generated code:
+chatGPT generated code, does not work
 
 import numpy as np
 from PySide6.QtGui import QImage, QColor
