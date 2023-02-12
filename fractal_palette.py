@@ -28,10 +28,10 @@ class Fractal_palette():
             color = QColor(255, 255, int(i*255/64))
             self.palette_array.append(color) 
         for i in range(0, 64):
-            color = QColor(255-int((i*255/64)), 255, i-int((i*255/64)))
+            color = QColor(255-int((i*255/64)), 255, 255-int((i*255/64)))
             self.palette_array.append(color)
         print(len(self.palette_array), " colours in palette.")
-            
+        # quit()            
     def get_color(self, number: int) -> QColor:
         return self.palette_array[number]
     
