@@ -5,11 +5,11 @@ from PySide6.QtWidgets import QApplication
 import sys
 
 # Initial values:
-r_min = -1.5
-r_max = 1.5
-i_min = -1.5j
-i_max = (r_max-r_min)*1.0j + i_min
-
+r_min = -0.4 # -2.0
+r_max = 0.7 # 2.0
+i_min = -0.5j # -2.0j
+i_max = (r_max-r_min)*1.0j + i_min # -> 2.0j
+# check the Julia set with c = 0.285+0.01i.
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

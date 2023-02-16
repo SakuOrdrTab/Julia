@@ -127,9 +127,13 @@ class Main_window(QMainWindow):
         
         self.toolbar = Toolbar() # toolbar, custom toolbar from class Toolbar
         window_layout.addWidget(self.toolbar)
+        self.toolbar.calc_button.clicked.connect(self.calc_button_clicked)
         
-        # set imax
-        self.toolbar.imax_entry_txt.setText(str(self.max_i))
+        # set texts for toolbar plane frame
+        self.toolbar.imax_entry_txt.setText(str(self.max_i.imag) + "j")
+        self.toolbar.imin_entry.setText(str(self.min_i.imag) + "j")
+        self.toolbar.rmax_entry.setText(str(self.max_r.real))
+        self.toolbar.rmin_entry.setText(str(self.min_r.real))
         
         # import time
         # # time it for numpy:
@@ -150,3 +154,7 @@ class Main_window(QMainWindow):
         self.setCentralWidget(widget)
         return None
     
+    def calc_button_clicked(self):
+        print("calc_button was clicked!")
+        self.toolbar.infobar.setText("Calc_button has been clicked")
+        return None
