@@ -96,7 +96,7 @@ class Fractal_QLabel(QLabel):
         self.setPixmap(pixmap_image)
         self.setAlignment(Qt.AlignCenter)
         self.setScaledContents(False)
-        # self.setFixedSize(800,600)
+        self.setFixedSize(800,600) # to ease mouse track calculations etc
         
         self.setMouseTracking(True)
         return None

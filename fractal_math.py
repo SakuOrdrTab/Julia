@@ -28,7 +28,7 @@ class Complex_plane():
     """Class for holding the complex plane to plot fractal from. Currently constant (-2 .. 2, -2i .. 2i)
     """    
     def __init__(self, minr, maxr, mini, maxi):
-        self.complex_array = np.linspace(mini, maxi, num = 800) .reshape(-1, 1) + np.linspace(minr, maxr, num = 600)
+        self.complex_array = np.linspace(mini, maxi, num = 600) .reshape(-1, 1) + np.linspace(minr, maxr, num = 800)
         
     def plane(self):
         """returns the complex array (2d numpy float) the object is holding
