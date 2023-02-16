@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, \
-QHBoxLayout, QLabel, QToolBar, QFrame, QPushButton
+QHBoxLayout, QLabel, QToolBar, QFrame, QPushButton, QLineEdit
 from PySide6.QtGui import QPalette, QColor, QImage, QPixmap
 from PySide6.QtCore import Qt
 
@@ -12,6 +12,12 @@ import fractal_palette
 # In the init of this Fractal_QLabel, palette is set and image is made from the
 # passmap (from fractalmath) using the palette that returns QColors.
 
+class Number_input_box(QLineEdit):
+    """A QLineEdit box a bit narrower for input of floats for frame
+    """    
+    def __init__(self):
+        super().__init__()
+        self.setMaximumWidth(100)
 
 class Toolbar(QWidget):
     """Toolbar class (QWidget) for creating a toolbar on the top of GUI
@@ -23,22 +29,32 @@ class Toolbar(QWidget):
         super().__init__()
         # make a toolbar
         toolbar_layout = QHBoxLayout()
+        
         toolbar_layout.addWidget(QLabel("R_min:"))
-        toolbar_layout.addWidget(QWidget())
+        self.rmin_entry = Number_input_box()
+        toolbar_layout.addWidget(self.rmin_entry)
+        
         toolbar_layout.addWidget(QLabel("R_max: "))
-        toolbar_layout.addWidget(QWidget()) 
+        self.rmax_entry = Number_input_box()
+        toolbar_layout.addWidget(self.rmax_entry)
+        
         toolbar_layout.addWidget(QLabel("I_min: "))
-        toolbar_layout.addWidget(QWidget()) 
+        self.imin_entry = Number_input_box()
+        toolbar_layout.addWidget(self.imin_entry)
+        
         toolbar_layout.addWidget(QLabel("I_max: "))
-        toolbar_layout.addWidget(QWidget())
+        self.imax_entry = Number_input_box()
+        toolbar_layout.addWidget(self.imax_entry)
+        
         self.calc_button = QPushButton("Calculate")
-        toolbar_layout.addWidget(self.calc_button, self)
+        toolbar_layout.addWidget(self.calc_button)
+        
         self.infobar = QLabel()
-        toolbar_layout.addWidget(self.infobar)
         self.infobar.setText("Infobar")
+        toolbar_layout.addWidget(self.infobar)
         
         self.setLayout(toolbar_layout)
-        self.calc_button.show()
+      
         return None
     
 class Fractal_QLabel(QLabel):
@@ -94,7 +110,7 @@ class Main_window(QMainWindow):
         self.min_r = rmin
         self.max_r = rmax
         self.min_i = imin
-        self.max_i = self.max_r-self.min_r*600/800 + self.min_i
+        self.max_i = (self.max_r-self.min_r)*1.0j + self.min_i
         print(self.min_r, self.max_r, self.min_i, self.max_i)
         
          # complex plane for math, numpy 2d array

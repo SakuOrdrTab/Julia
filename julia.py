@@ -8,7 +8,7 @@ import sys
 r_min = -2.0
 r_max = 2.0
 i_min = -2.0j
-i_max = r_max-r_min*600/800 + i_min
+i_max = (r_max-r_min)*1.0j + i_min
 
 
 if __name__ == "__main__":
