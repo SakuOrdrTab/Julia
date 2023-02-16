@@ -42,9 +42,13 @@ class Toolbar(QWidget):
         self.imin_entry = Number_input_box()
         toolbar_layout.addWidget(self.imin_entry)
         
+        # max imag number not enterable, calculated from other three
         toolbar_layout.addWidget(QLabel("I_max: "))
-        self.imax_entry = Number_input_box()
-        toolbar_layout.addWidget(self.imax_entry)
+        # self.imax_entry = Number_input_box()
+        # toolbar_layout.addWidget(self.imax_entry)
+        self.imax_entry_txt = QLabel()
+        toolbar_layout.addWidget(self.imax_entry_txt)
+        self.imax_entry_txt.setText("None yet")
         
         self.calc_button = QPushButton("Calculate")
         toolbar_layout.addWidget(self.calc_button)
@@ -123,6 +127,9 @@ class Main_window(QMainWindow):
         
         self.toolbar = Toolbar() # toolbar, custom toolbar from class Toolbar
         window_layout.addWidget(self.toolbar)
+        
+        # set imax
+        self.toolbar.imax_entry_txt.setText(str(self.max_i))
         
         # import time
         # # time it for numpy:
