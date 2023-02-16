@@ -69,9 +69,10 @@ class Fractal_QLabel(QLabel):
         QLabel (passmap): 2d numpy array of integers
     """    
 
-    def __init__(self, passmap):
+    def __init__(self, passmap, toolbar):
         super().__init__()
         self.palette = fractal_palette.Fractal_palette() # palette
+        self.toolbar = toolbar
         
         # print(passmap.shape)
         # old grayscale: qImg = QImage(passmap, len(passmap[0]), len(passmap), len(passmap[0]),  QImage.Format_Grayscale8)
@@ -95,8 +96,14 @@ class Fractal_QLabel(QLabel):
         self.setPixmap(pixmap_image)
         self.setAlignment(Qt.AlignCenter)
         self.setScaledContents(False)
-        # self.setMinimumSize(100,100)
+        # self.setFixedSize(800,600)
         
+        self.setMouseTracking(True)
+        return None
+        
+    def mousePressEvent(self, e):
+        self.toolbar.infobar.setText("mouse pressed at " +  str(e.pos()))    
+        return None
 
     
 class Main_window(QMainWindow):
@@ -138,7 +145,7 @@ class Main_window(QMainWindow):
         # import time
         # # time it for numpy:
         # start = time.time()
-        fractal_image = Fractal_QLabel(cplane.pass_map()) # 2d numpy array of passes
+        fractal_image = Fractal_QLabel(cplane.pass_map(), self.toolbar) # 2d numpy array of passes
         # end = time.time()
         # print("Time for numpy array iterations: ", end-start)
         # # time it for python list 2d
