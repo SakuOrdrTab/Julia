@@ -82,9 +82,11 @@ class Fractal_QLabel(QLabel):
         # This too did not work:
         # qImg = QImage(passmap, len(passmap[0]), len(passmap), len(passmap[0]),  QImage.Format_RGB888)
         
-        qImg = QImage(len(passmap[0]), len(passmap), QImage.Format_RGB32)
-        for x in range(len(passmap[0])):
-            for y in range(len(passmap)):
+        self.f_width, self.f_height = len(passmap[0]), len(passmap)
+        
+        qImg = QImage(self.f_width, self.f_height, QImage.Format_RGB32)
+        for x in range(self.f_width):
+            for y in range(self.f_height):
                 # print(self.palette.get_color(passmap[y, x]))
                 qImg.setPixelColor(x, y, self.palette.get_color(passmap[y, x]))
         # https://stackoverflow.com/questions/14821878/cant-fill-qimage-via-setpixel-properly
@@ -96,13 +98,20 @@ class Fractal_QLabel(QLabel):
         self.setPixmap(pixmap_image)
         self.setAlignment(Qt.AlignCenter)
         self.setScaledContents(False)
-        self.setFixedSize(800,600) # to ease mouse track calculations etc
+        self.setFixedSize(self.f_width, self.f_height) # to ease mouse track calculations etc
         
         self.setMouseTracking(True)
         return None
+    
+    def set_complex_plane_values(self, minr, maxr, mini, maxi):
+        self.minr, self.maxr, self.mini, self.maxi = minr, maxr, mini, maxi
+        return None
         
     def mousePressEvent(self, e):
-        self.toolbar.infobar.setText("mouse pressed at " +  str(e.pos()))    
+        point = e.pos()
+        mouse_r_pos = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
+        mouse_i_pos = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
+        self.toolbar.infobar.setText(f"mouse pressed at {mouse_r_pos:.5}, {mouse_i_pos:.5}")    
         return None
 
     
@@ -113,7 +122,8 @@ class Main_window(QMainWindow):
         QMainWindow (): 
     """    
 
-    def __init__(self, rmin = -2.0, rmax = 2.0, imin = -2.0j, imax = 2.0j):
+    def __init__(self, rmin, rmax, imin, imax,
+                 FRACTAL_WIDGET_WIDTH, FRACTAL_WIDGET_HEIGHT):
         super().__init__()
         self.setWindowTitle("Julia")
         # set complexplane values to be visualized, passed from julia.py and then 
@@ -122,10 +132,13 @@ class Main_window(QMainWindow):
         self.max_r = rmax
         self.min_i = imin
         self.max_i = (self.max_r-self.min_r)*1.0j + self.min_i
+        self.frac_width = FRACTAL_WIDGET_WIDTH
+        self.frac_height = FRACTAL_WIDGET_HEIGHT
         print(self.min_r, self.max_r, self.min_i, self.max_i)
         
          # complex plane for math, numpy 2d array
-        cplane = fractal_math.Complex_plane(self.min_r, self.max_r, self.min_i, self.max_i)
+        cplane = fractal_math.Complex_plane(self.min_r, self.max_r, self.min_i, self.max_i,
+                                            self.frac_width, self.frac_height)
         
         # self.palette = fractal_palette.Fractal_palette() # palette for fractal
         
@@ -146,6 +159,7 @@ class Main_window(QMainWindow):
         # # time it for numpy:
         # start = time.time()
         fractal_image = Fractal_QLabel(cplane.pass_map(), self.toolbar) # 2d numpy array of passes
+        fractal_image.set_complex_plane_values(self.min_r, self.max_r, self.min_i, self.max_i)
         # end = time.time()
         # print("Time for numpy array iterations: ", end-start)
         # # time it for python list 2d
@@ -162,6 +176,6 @@ class Main_window(QMainWindow):
         return None
     
     def calc_button_clicked(self):
-        print("calc_button was clicked!")
+        # print("calc_button was clicked!")
         self.toolbar.infobar.setText("Calc_button has been clicked")
         return None

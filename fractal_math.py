@@ -1,5 +1,5 @@
 import numpy as np
-import fractal_palette
+
 
 def iters_passed(c: np.complex128) -> int:
     """Returns number of iterations passed (= belongs to the Mandelbrot set). Currently func = c * c + Z,
@@ -27,8 +27,8 @@ def iters_passed(c: np.complex128) -> int:
 class Complex_plane():
     """Class for holding the complex plane to plot fractal from. Currently constant (-2 .. 2, -2i .. 2i)
     """    
-    def __init__(self, minr, maxr, mini, maxi):
-        self.complex_array = np.linspace(mini, maxi, num = 600) .reshape(-1, 1) + np.linspace(minr, maxr, num = 800)
+    def __init__(self, minr, maxr, mini, maxi, FRACTAL_WIDGET_WIDTH, FRACTAL_WIDGET_HEIGHT):
+        self.complex_array = np.linspace(mini, maxi, num = FRACTAL_WIDGET_HEIGHT) .reshape(-1, 1) + np.linspace(minr, maxr, num = FRACTAL_WIDGET_WIDTH)
         
     def plane(self):
         """returns the complex array (2d numpy float) the object is holding
