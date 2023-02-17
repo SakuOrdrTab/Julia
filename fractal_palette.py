@@ -15,8 +15,11 @@ from PySide6.QtGui import QColor
 #         return newcolor
 
 class Fractal_palette():
-           
+    """Class for palette for the fractal. Constructor creates the colours.
+    """           
     def __init__(self):
+        """Creates the colours for fractal's palette
+        """        
         self.palette_array = []
         for i in range(0, 64):
             color = QColor(int(i*255/64), 0, 0)
@@ -30,9 +33,17 @@ class Fractal_palette():
         for i in range(0, 64):
             color = QColor(255-int((i*255/64)), 255, 255-int((i*255/64)))
             self.palette_array.append(color)
-        print(len(self.palette_array), " colours in palette.")
-        # quit()            
+        # print(len(self.palette_array), " colours in palette.")
+                    
     def get_color(self, number: int) -> QColor:
+        """Returns QColor from the palette
+
+        Args:
+            number (int): the number of colour demanded from list (0..255)
+
+        Returns:
+            QColor: the colour
+        """        
         return self.palette_array[number]
     
 # for debugging:    

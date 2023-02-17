@@ -2,14 +2,14 @@ import numpy as np
 
 
 def iters_passed(c: np.complex128) -> int:
-    """Returns number of iterations passed (= belongs to the Mandelbrot set). Currently func = c * c + Z,
-    where c is the complex number argument and Z is the constant (0 + 0j)
+    """Returns number of iterations passed (= belongs to the Julia set). Currently func = c * c + Z,
+    where c is the complex number argument and Z is the constant (0.25 + 0j)
 
     Args:
         c (np.complex128): Complex parameter for fractal function
 
     Returns:
-        int: number of passes before iters > 100
+        int: number of passes before iters > 255
     """    
     # f = c * c + z ; mandelbrot
     z = np.complex128(0.25 + 0.00j)
@@ -24,10 +24,21 @@ def iters_passed(c: np.complex128) -> int:
                 return i
         return 255
 
+
 class Complex_plane():
-    """Class for holding the complex plane to plot fractal from. Currently constant (-2 .. 2, -2i .. 2i)
+    """Class for holding the complex plane to plot fractal from.
     """    
     def __init__(self, minr, maxr, mini, maxi, FRACTAL_WIDGET_WIDTH, FRACTAL_WIDGET_HEIGHT):
+        """Constructs Complex plane according to arguments
+
+        Args:
+            minr (float): minimum real value for plane
+            maxr (float): maximum real value
+            mini (np.complex128): minimum imaginary value for plane
+            maxi (np.complex128): maximum imaginary value   
+            FRACTAL_WIDGET_WIDTH (int): width of the fractal widget, constant
+            FRACTAL_WIDGET_HEIGHT (int): height of the fractal widget, constant
+        """        
         self.complex_array = np.linspace(mini, maxi, num = FRACTAL_WIDGET_HEIGHT) .reshape(-1, 1) + np.linspace(minr, maxr, num = FRACTAL_WIDGET_WIDTH)
         
     def plane(self):
@@ -96,29 +107,14 @@ class Complex_plane():
             result[y, x] = iters_passed(complex)
         return result
     
-    def pass_map2(self):
-        # old code, for testing purposes   
-        result = []
-        for cplane_line in self.complex_array:
-            newline = []
-            for cnumber in cplane_line:
-                newline.append(iters_passed(cnumber))
-            result.append(newline)
-        return np.array(result, dtype="uint8")
-    
-    def pass_map_coloured(self, palette):
-        """Colour version
-        """
-        # x, y = self.complex_array.shape
-        # new_shape = (x, y, 4)
-        result = np.empty(shape=self.complex_array.shape, dtype=np.uint32)
-        for (y, x), complex in np.ndenumerate(self.complex_array):
-            color = palette.get_color(iters_passed(complex))
-            # color is 0xRRGGBBAA in hex?
-            result[y, x] = color.red() * 256 * 256 * 256 + \
-                            color.green() * 256 * 256 + \
-                            color.blue() * 256 + \
-                            255
-        return result
+    # def pass_map2(self):
+    #     # old code, for testing purposes   
+    #     result = []
+    #     for cplane_line in self.complex_array:
+    #         newline = []
+    #         for cnumber in cplane_line:
+    #             newline.append(iters_passed(cnumber))
+    #         result.append(newline)
+    #     return np.array(result, dtype="uint8")
 
 
