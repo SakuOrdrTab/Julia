@@ -113,6 +113,19 @@ class Fractal_QLabel(QLabel):
         mouse_i_pos = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
         self.toolbar.infobar.setText(f"mouse pressed at {mouse_r_pos:.5}, {mouse_i_pos:.5}")    
         return None
+    
+    def update_fractal_picture(self, passmap):
+        qImg = QImage(self.f_width, self.f_height, QImage.Format_RGB32)
+        for x in range(self.f_width):
+            for y in range(self.f_height):
+                # print(self.palette.get_color(passmap[y, x]))
+                qImg.setPixelColor(x, y, self.palette.get_color(passmap[y, x]))
+        # https://stackoverflow.com/questions/14821878/cant-fill-qimage-via-setpixel-properly
+        
+        pixmap01 = QPixmap.fromImage(qImg)
+        pixmap_image = QPixmap(pixmap01)
+        self.setPixmap(pixmap_image)
+        return None
 
     
 class Main_window(QMainWindow):
@@ -158,8 +171,8 @@ class Main_window(QMainWindow):
         # import time
         # # time it for numpy:
         # start = time.time()
-        fractal_image = Fractal_QLabel(cplane.pass_map(), self.toolbar) # 2d numpy array of passes
-        fractal_image.set_complex_plane_values(self.min_r, self.max_r, self.min_i, self.max_i)
+        self.fractal_image = Fractal_QLabel(cplane.pass_map(), self.toolbar) # 2d numpy array of passes
+        self.fractal_image.set_complex_plane_values(self.min_r, self.max_r, self.min_i, self.max_i)
         # end = time.time()
         # print("Time for numpy array iterations: ", end-start)
         # # time it for python list 2d
@@ -168,7 +181,7 @@ class Main_window(QMainWindow):
         # end = time.time()
         # print("Time for Python array iterations: ", end-start)
         
-        window_layout.addWidget(fractal_image) # QLabel child class containing fractal image
+        window_layout.addWidget(self.fractal_image) # QLabel child class containing fractal image
         
         widget = QWidget() # add widget to contain all stuff in main window
         widget.setLayout(window_layout)
@@ -177,5 +190,9 @@ class Main_window(QMainWindow):
     
     def calc_button_clicked(self):
         # print("calc_button was clicked!")
-        self.toolbar.infobar.setText("Calc_button has been clicked")
+        self.toolbar.infobar.setText("Starting fractal calculation")
+        cplane = fractal_math.Complex_plane(self.min_r, self.max_r, self.min_i, self.max_i,
+                                            self.frac_width, self.frac_height)
+        self.fractal_image.update_fractal_picture(cplane.pass_map())
+        self.toolbar.infobar.setText("Fractal calculation complete")
         return None
