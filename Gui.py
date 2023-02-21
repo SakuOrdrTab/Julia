@@ -123,6 +123,8 @@ class Fractal_QLabel(QLabel):
             self.toolbar.imax_entry_txt.setText(f"{imax:.2f}")
         return None
     
+    # zoomable fractal pyside
+    
     def update_fractal_picture(self, passmap) -> None:
         """Recalculates the fractal and displays it according to refreshed passmap. Sets PixMap
 
