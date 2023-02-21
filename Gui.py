@@ -102,7 +102,7 @@ class Fractal_QLabel(QLabel):
         
     def mousePressEvent(self, e) -> None:
         """Activated when mouse is pressed in Fractal_QLabel. Information of press in
-        infobar.
+        infobar. Left click sets min_r and min_i to toolbar, right click max_r and max_i
 
         Args:
             e (event): mouse press event
@@ -110,7 +110,17 @@ class Fractal_QLabel(QLabel):
         point = e.pos()
         mouse_r_pos = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
         mouse_i_pos = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
-        self.infobar.setText(f"mouse pressed at {mouse_r_pos:.5}, {mouse_i_pos:.5}")    
+        self.infobar.setText(f"mouse pressed at {mouse_r_pos:.5}, {mouse_i_pos:.5}")
+        if e.button() == Qt.LeftButton:
+            rmin = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
+            self.toolbar.rmin_entry.setText(f"{rmin:.2f}")
+            imin = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
+            self.toolbar.imin_entry.setText(f"{imin:.2f}")
+        if e.button() == Qt.RightButton: 
+            rmax = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
+            imax = (rmax-float(self.toolbar.rmin_entry.text()))*1.0j + complex(self.toolbar.imin_entry.text())
+            self.toolbar.rmax_entry.setText(f"{rmax:.2f}")
+            self.toolbar.imax_entry_txt.setText(f"{imax:.2f}")
         return None
     
     def update_fractal_picture(self, passmap) -> None:
@@ -183,7 +193,8 @@ class Main_window(QMainWindow):
         self.toolbar.calc_button.clicked.connect(self.calc_button_clicked)
         
         self.infobar = QLabel()
-        self.infobar.setText("Infobar")
+        self.infobar.setText("press left button to update rimn & imin, right to set rmax. "+\
+            'imax is set automatically. push "calculate" to draw fractal.')
         window_layout.addWidget(self.infobar)
         
         # set texts for toolbar plane frame
@@ -205,6 +216,12 @@ class Main_window(QMainWindow):
     def calc_button_clicked(self) -> None:
         """Activates when calculate button is pressed. Draws a new fractal image
         """        
+        # copy toolbar values to self.mins and self.maxs
+        self.min_r = float(self.toolbar.rmin_entry.text())
+        self.max_r = float(self.toolbar.rmax_entry.text())
+        self.min_i = complex(self.toolbar.imin_entry.text())
+        self.max_i = complex(self.toolbar.imax_entry_txt.text()) # imax = qlabel
+        
         start = time.time() # start timing
         self.infobar.setText("Starting fractal calculation")
         self.cplane = fractal_math.Complex_plane(self.min_r, self.max_r, self.min_i, self.max_i,

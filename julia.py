@@ -1,5 +1,6 @@
-# main file, ver 1.1
+# main file, ver 1.2
 # 1.1 added gui features etc
+# 1.2 mouse works
 
 import Gui
 from PySide6.QtWidgets import QApplication
