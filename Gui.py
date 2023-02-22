@@ -1,19 +1,20 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, \
-QHBoxLayout, QLabel, QToolBar, QFrame, QPushButton, QLineEdit
-from PySide6.QtGui import QPalette, QColor, QImage, QPixmap
-from PySide6.QtCore import Qt
+QHBoxLayout, QLabel, QPushButton, QLineEdit, QGraphicsRectItem
+from PySide6.QtGui import QPalette, QColor, QImage, QPixmap, QPainter, QBrush, QPen
+from PySide6.QtCore import Qt, QRect
 
 import fractal_math
 import fractal_palette
 
 import time
 
-# Gui for displaying fractal
-# Toolbor created and laid on top, then the fractal is in it's own widget,
-# derived from QWidget
+# GUI for displaying fractal
+# Includes toolbar (top), infobar, and widget to show the fractal (bottom)
 # In the init of this Fractal_QLabel, palette is set and image is made from the
 # passmap (from fractalmath) using the palette that returns QColors.
 
+# Check also:
+# https://doc.qt.io/qtforpython-6.2/overviews/qtcore-threads-mandelbrot-example.html
 
 class Number_input_box(QLineEdit):
     """A QLineEdit box a bit narrower for input of floats for frame
@@ -21,6 +22,7 @@ class Number_input_box(QLineEdit):
     def __init__(self):
         super().__init__()
         self.setMaximumWidth(100)
+
 
 
 class Toolbar(QWidget):
@@ -59,6 +61,8 @@ class Toolbar(QWidget):
       
         return None
     
+    
+    
 class Fractal_QLabel(QLabel):
     """Class (QLabel) for displaying the fractal picture. Picture is passed as numpy 2d-array and
     stored as a QPixmap
@@ -86,6 +90,7 @@ class Fractal_QLabel(QLabel):
         self.setFixedSize(self.f_width, self.f_height) # to ease mouse track calculations etc
         
         self.setMouseTracking(True)
+        
         return None
     
     def set_complex_plane_values(self, minr, maxr, mini, maxi) -> None:
@@ -107,6 +112,18 @@ class Fractal_QLabel(QLabel):
         Args:
             e (event): mouse press event
         """        
+        # Needs to be implemented:
+        # - LMB starts drawing a rectangle and RMB finishes the rect and sets new
+        #   values for toolbar's NumberInputBoxes etc 
+        # - rect is updated according to mouseMovementEvent, until RMB is pressed
+        # For info:
+        # https://stackoverflow.com/questions/42616907/pyqt-how-to-overlay-a-rectangle-on-an-image
+        # ^ seems to be obsolete,  produces errors and is for QImg, not QPixmap
+        # https://stackoverflow.com/questions/44468775/how-to-draw-a-rectangle-and-adjust-its-shape-by-drag-and-drop-in-pyqt5
+        # ^ draws a rect in separate window, does not update. Needs a parent?
+        # https://doc.qt.io/qtforpython/PySide6/QtWidgets/QGraphicsRectItem.html
+        # ^ needs to be on a QGraphicsScene, didn't show up
+        
         point = e.pos()
         mouse_r_pos = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
         mouse_i_pos = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
@@ -116,15 +133,13 @@ class Fractal_QLabel(QLabel):
             rmin = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
             self.toolbar.rmin_entry.setText(f"{rmin:.5f}")
             imin = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
-            self.toolbar.imin_entry.setText(f"{imin:.5f}")
+            self.toolbar.imin_entry.setText(f"{imin:.5}")
         if e.button() == Qt.RightButton: 
             rmax = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
             imax = (rmax-float(self.toolbar.rmin_entry.text()))*1.0j + complex(self.toolbar.imin_entry.text())
             self.toolbar.rmax_entry.setText(f"{rmax:.5f}")
-            self.toolbar.imax_entry_txt.setText(f"{imax:.5f}")
+            self.toolbar.imax_entry_txt.setText(f"{imax:.5}")
         return None
-    
-    # zoomable fractal pyside
     
     def update_fractal_picture(self, passmap) -> None:
         """Recalculates the fractal and displays it according to refreshed passmap. Sets PixMap
@@ -151,6 +166,7 @@ class Fractal_QLabel(QLabel):
         pixmap_image = QPixmap(pixmap01)
         self.setPixmap(pixmap_image)
         return None
+
 
     
 class Main_window(QMainWindow):
