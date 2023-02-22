@@ -110,17 +110,18 @@ class Fractal_QLabel(QLabel):
         point = e.pos()
         mouse_r_pos = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
         mouse_i_pos = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
+        # print(f"self.frame:{self.minr},{self.maxr} - {self.mini}, {self.maxi}")
         self.infobar.setText(f"mouse pressed at {mouse_r_pos:.5}, {mouse_i_pos:.5}")
         if e.button() == Qt.LeftButton:
             rmin = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
-            self.toolbar.rmin_entry.setText(f"{rmin:.2f}")
+            self.toolbar.rmin_entry.setText(f"{rmin:.5f}")
             imin = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
-            self.toolbar.imin_entry.setText(f"{imin:.2f}")
+            self.toolbar.imin_entry.setText(f"{imin:.5f}")
         if e.button() == Qt.RightButton: 
             rmax = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
             imax = (rmax-float(self.toolbar.rmin_entry.text()))*1.0j + complex(self.toolbar.imin_entry.text())
-            self.toolbar.rmax_entry.setText(f"{rmax:.2f}")
-            self.toolbar.imax_entry_txt.setText(f"{imax:.2f}")
+            self.toolbar.rmax_entry.setText(f"{rmax:.5f}")
+            self.toolbar.imax_entry_txt.setText(f"{imax:.5f}")
         return None
     
     # zoomable fractal pyside
@@ -231,4 +232,7 @@ class Main_window(QMainWindow):
         self.fractal_image.update_fractal_picture(self.cplane.pass_map())
         end = time.time() # finish timing
         self.infobar.setText(f"Fractal complete, time: {(end-start):.2f}s.")
+        
+        # refresh frame values to Fractal_QLabel, too
+        self.fractal_image.set_complex_plane_values(self.min_r, self.max_r, self.min_i, self.max_i)
         return None
