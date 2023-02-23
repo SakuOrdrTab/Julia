@@ -243,6 +243,7 @@ class Main_window(QMainWindow):
         
         start = time.time() # start timing
         self.infobar.setText("Starting fractal calculation")
+        print(f"Inside calc_button_clicked: frame {self.min_r} - {self.max_r} , {self.min_i} - {self.max_i} ")
         self.cplane = fractal_math.Complex_plane(self.min_r, self.max_r, self.min_i, self.max_i,
                                             self.frac_width, self.frac_height)
         self.fractal_image.update_fractal_picture(self.cplane.pass_map())
