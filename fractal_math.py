@@ -12,7 +12,7 @@ def iters_passed(c: np.complex128) -> int:
         int: number of passes before iters > 255
     """    
     # f = c * c + z ; mandelbrot
-    z = np.complex128(0.25 + 0.00j)
+    z = np.complex128(0.00 + 0.66j)
     if c == (0 + 0j):
         return 0
     else:
