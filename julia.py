@@ -6,6 +6,7 @@ import Gui
 from PySide6.QtWidgets import QApplication
 import sys
 
+
 #constants for fractal widget dimensions:
 FRACTAL_WIDGET_WIDTH = 800
 FRACTAL_WIDGET_HEIGHT = 600
@@ -16,6 +17,8 @@ r_max = 3.0 # 2.0
 i_min = -3.0j # -2.0j
 i_max = (r_max-r_min)*1.0j + i_min # -> 2.0j
 # check the Julia set with c = 0.285+0.01i.
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
