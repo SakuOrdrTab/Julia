@@ -127,7 +127,7 @@ class Fractal_QLabel(QLabel):
         point = e.pos()
         mouse_r_pos = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
         mouse_i_pos = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
-        # print(f"self.frame:{self.minr},{self.maxr} - {self.mini}, {self.maxi}")
+        print(f" Inside mousePressEvent: self.frame:{self.minr} - {self.maxr} , {self.mini} - {self.maxi}")
         self.infobar.setText(f"mouse pressed at {mouse_r_pos:.5}, {mouse_i_pos:.5}")
         if e.button() == Qt.LeftButton:
             rmin = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
