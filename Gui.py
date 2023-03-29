@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, \
-QHBoxLayout, QLabel, QPushButton, QLineEdit, QGraphicsRectItem
+QHBoxLayout, QLabel, QPushButton, QLineEdit, QRubberBand
 from PySide6.QtGui import QPalette, QColor, QImage, QPixmap, QPainter, QBrush, QPen
-from PySide6.QtCore import Qt, QRect
+from PySide6.QtCore import Qt, QRect, QPoint, QSize
 
 import fractal_math
 import fractal_palette
@@ -90,7 +90,7 @@ class Fractal_QLabel(QLabel):
         self.setFixedSize(self.f_width, self.f_height) # to ease mouse track calculations etc
         
         self.setMouseTracking(True)
-        
+        self.rubberBand = None
         return None
     
     def set_complex_plane_values(self, minr, maxr, mini, maxi) -> None:
@@ -105,7 +105,7 @@ class Fractal_QLabel(QLabel):
         self.minr, self.maxr, self.mini, self.maxi = minr, maxr, mini, maxi
         return None
         
-    def mousePressEvent(self, e) -> None:
+    def mousePressEvent(self, event) -> None:
         """Activated when mouse is pressed in Fractal_QLabel. Information of press in
         infobar. Left click sets min_r and min_i to toolbar, right click max_r and max_i
 
@@ -123,23 +123,59 @@ class Fractal_QLabel(QLabel):
         # ^ draws a rect in separate window, does not update. Needs a parent?
         # https://doc.qt.io/qtforpython/PySide6/QtWidgets/QGraphicsRectItem.html
         # ^ needs to be on a QGraphicsScene, didn't show up
-        
-        point = e.pos()
-        mouse_r_pos = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
-        mouse_i_pos = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
-        print(f" Inside mousePressEvent: self.frame:{self.minr} - {self.maxr} , {self.mini} - {self.maxi}")
-        self.infobar.setText(f"mouse pressed at {mouse_r_pos:.5}, {mouse_i_pos:.5}")
-        if e.button() == Qt.LeftButton:
-            rmin = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
-            self.toolbar.rmin_entry.setText(f"{rmin:.5f}")
-            imin = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
-            self.toolbar.imin_entry.setText(f"{imin:.5}")
-        if e.button() == Qt.RightButton: 
-            rmax = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
-            imax = (rmax-float(self.toolbar.rmin_entry.text()))*1.0j + complex(self.toolbar.imin_entry.text())
-            self.toolbar.rmax_entry.setText(f"{rmax:.5f}")
-            self.toolbar.imax_entry_txt.setText(f"{imax:.5}")
+        self.origin = QPoint(event.position().x(),event.position().y())
+        if self.rubberBand == None:
+            self.rubberBand = QRubberBand(QRubberBand.Rectangle, self)
+            self.rubberBand.setGeometry(QRect(self.origin, QSize()))
+            self.rubberBand.show()
         return None
+    
+    
+    def mouseMoveEvent(self, event):
+        if (self.rubberBand != None) and (event.position().x() <= 800):
+            self.rubberBand.setGeometry(QRect(self.origin, QPoint(event.position().x(), self.origin.y() + (event.position().x() - self.origin.x()) * 600 / 800)))
+        return None
+    
+    
+    def mouseReleaseEvent(self, event):
+        minpoint = self.origin
+        maxpoint = QPoint(event.position().x(),event.position().y())
+        rmin = minpoint.x() * (self.maxr - self.minr) / self.f_width + self.minr
+        self.toolbar.rmin_entry.setText(f"{rmin:.5f}")
+        imin = minpoint.y() * (self.maxi - self.mini) / self.f_height + self.mini
+        self.toolbar.imin_entry.setText(f"{imin:.5}")
+        
+        minx = self.rubberBand.x()
+        miny = self.rubberBand.y()
+        maxx = minx + self.rubberBand.width()-1
+        maxy = miny + self.rubberBand.height()-1
+        rmax = maxpoint.x() * (self.maxr - self.minr) / self.f_width + self.minr
+        imax = (rmax-float(self.toolbar.rmin_entry.text()))*1.0j + complex(self.toolbar.imin_entry.text())
+        self.toolbar.rmax_entry.setText(f"{rmax:.5f}")
+        self.toolbar.imax_entry_txt.setText(f"{imax:.5}")
+        print(f"min x: {minx} min y: {miny} max x: {maxx} max y: {maxy} ")
+        
+        self.rubberBand.hide()
+        self.rubberBand = None 
+        return None
+            
+        # OBSOLETE CODE:
+        # point = self.origin
+        # mouse_r_pos = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
+        # mouse_i_pos = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
+        # print(f" Inside mousePressEvent: self.frame:{self.minr} - {self.maxr} , {self.mini} - {self.maxi}")
+        # self.infobar.setText(f"mouse pressed at {mouse_r_pos:.5}, {mouse_i_pos:.5}")
+        # if e.button() == Qt.LeftButton:
+        #     rmin = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
+        #     self.toolbar.rmin_entry.setText(f"{rmin:.5f}")
+        #     imin = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
+        #     self.toolbar.imin_entry.setText(f"{imin:.5}")
+        # if e.button() == Qt.RightButton: 
+        #     rmax = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
+        #     imax = (rmax-float(self.toolbar.rmin_entry.text()))*1.0j + complex(self.toolbar.imin_entry.text())
+        #     self.toolbar.rmax_entry.setText(f"{rmax:.5f}")
+        #     self.toolbar.imax_entry_txt.setText(f"{imax:.5}")
+        # return None
     
     def update_fractal_picture(self, passmap) -> None:
         """Recalculates the fractal and displays it according to refreshed passmap. Sets PixMap
