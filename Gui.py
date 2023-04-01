@@ -1,12 +1,12 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, \
-QHBoxLayout, QLabel, QPushButton, QLineEdit, QRubberBand
-from PySide6.QtGui import QPalette, QColor, QImage, QPixmap, QPainter, QBrush, QPen
+from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, \
+                            QPushButton, QLineEdit, QRubberBand
+from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtCore import Qt, QRect, QPoint, QSize
+import time
 
 import fractal_math
 import fractal_palette
 
-import time
 
 # GUI for displaying fractal
 # Includes toolbar (top), infobar, and widget to show the fractal (bottom)
@@ -16,13 +16,13 @@ import time
 # Check also:
 # https://doc.qt.io/qtforpython-6.2/overviews/qtcore-threads-mandelbrot-example.html
 
+
 class Number_input_box(QLineEdit):
     """A QLineEdit box a bit narrower for input of floats for frame
     """    
     def __init__(self):
         super().__init__()
         self.setMaximumWidth(100)
-
 
 
 class Toolbar(QWidget):
@@ -58,11 +58,9 @@ class Toolbar(QWidget):
         toolbar_layout.addWidget(self.calc_button)
                        
         self.setLayout(toolbar_layout)
-      
         return None
     
-    
-    
+        
 class Fractal_QLabel(QLabel):
     """Class (QLabel) for displaying the fractal picture. Picture is passed as numpy 2d-array and
     stored as a QPixmap
@@ -90,7 +88,7 @@ class Fractal_QLabel(QLabel):
         self.setFixedSize(self.f_width, self.f_height) # to ease mouse track calculations etc
         
         self.setMouseTracking(True)
-        self.rubberBand = None
+        self.rubberBand = None # For holding QRubberband, when there is a selection 
         return None
     
     def set_complex_plane_values(self, minr, maxr, mini, maxi) -> None:
@@ -110,19 +108,8 @@ class Fractal_QLabel(QLabel):
         infobar. Left click sets min_r and min_i to toolbar, right click max_r and max_i
 
         Args:
-            e (event): mouse press event
+            event (event): mouse press event
         """        
-        # Needs to be implemented:
-        # - LMB starts drawing a rectangle and RMB finishes the rect and sets new
-        #   values for toolbar's NumberInputBoxes etc 
-        # - rect is updated according to mouseMovementEvent, until RMB is pressed
-        # For info:
-        # https://stackoverflow.com/questions/42616907/pyqt-how-to-overlay-a-rectangle-on-an-image
-        # ^ seems to be obsolete,  produces errors and is for QImg, not QPixmap
-        # https://stackoverflow.com/questions/44468775/how-to-draw-a-rectangle-and-adjust-its-shape-by-drag-and-drop-in-pyqt5
-        # ^ draws a rect in separate window, does not update. Needs a parent?
-        # https://doc.qt.io/qtforpython/PySide6/QtWidgets/QGraphicsRectItem.html
-        # ^ needs to be on a QGraphicsScene, didn't show up
         self.origin = QPoint(event.position().x(),event.position().y())
         if self.rubberBand == None:
             self.rubberBand = QRubberBand(QRubberBand.Rectangle, self)
@@ -132,12 +119,16 @@ class Fractal_QLabel(QLabel):
     
     
     def mouseMoveEvent(self, event):
-        if (self.rubberBand != None) and (event.position().x() <= 800):
-            self.rubberBand.setGeometry(QRect(self.origin, QPoint(event.position().x(), self.origin.y() + (event.position().x() - self.origin.x()) * 600 / 800)))
+        """Mouse moving updates QRubberband, i.e. the selection in Fractal_QLabel
+        """        
+        if (self.rubberBand != None) and (event.position().x() <= self.f_width):
+            self.rubberBand.setGeometry(QRect(self.origin, QPoint(event.position().x(), self.origin.y() + (event.position().x() - self.origin.x()) * self.f_height / self.f_width)))
         return None
     
     
     def mouseReleaseEvent(self, event):
+        """Mouse release finishes the QRubberband, i.e. the selection in Fractal_QLabel
+        """        
         minpoint = self.origin
         maxpoint = QPoint(event.position().x(),event.position().y())
         rmin = minpoint.x() * (self.maxr - self.minr) / self.f_width + self.minr
@@ -153,30 +144,12 @@ class Fractal_QLabel(QLabel):
         imax = (rmax-float(self.toolbar.rmin_entry.text()))*1.0j + complex(self.toolbar.imin_entry.text())
         self.toolbar.rmax_entry.setText(f"{rmax:.5f}")
         self.toolbar.imax_entry_txt.setText(f"{imax:.5}")
-        print(f"min x: {minx} min y: {miny} max x: {maxx} max y: {maxy} ")
+        self.infobar.setText(f"New selection from ({minx}, {miny}) -> ({maxx}, {maxy})")
         
         self.rubberBand.hide()
         self.rubberBand = None 
         return None
-            
-        # OBSOLETE CODE:
-        # point = self.origin
-        # mouse_r_pos = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
-        # mouse_i_pos = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
-        # print(f" Inside mousePressEvent: self.frame:{self.minr} - {self.maxr} , {self.mini} - {self.maxi}")
-        # self.infobar.setText(f"mouse pressed at {mouse_r_pos:.5}, {mouse_i_pos:.5}")
-        # if e.button() == Qt.LeftButton:
-        #     rmin = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
-        #     self.toolbar.rmin_entry.setText(f"{rmin:.5f}")
-        #     imin = point.y() * (self.maxi - self.mini) / self.f_height + self.mini
-        #     self.toolbar.imin_entry.setText(f"{imin:.5}")
-        # if e.button() == Qt.RightButton: 
-        #     rmax = point.x() * (self.maxr - self.minr) / self.f_width + self.minr
-        #     imax = (rmax-float(self.toolbar.rmin_entry.text()))*1.0j + complex(self.toolbar.imin_entry.text())
-        #     self.toolbar.rmax_entry.setText(f"{rmax:.5f}")
-        #     self.toolbar.imax_entry_txt.setText(f"{imax:.5}")
-        # return None
-    
+
     def update_fractal_picture(self, passmap) -> None:
         """Recalculates the fractal and displays it according to refreshed passmap. Sets PixMap
 
@@ -186,23 +159,18 @@ class Fractal_QLabel(QLabel):
         Returns:
             None: 
         """        
-        qImg = QImage(self.f_width, self.f_height, QImage.Format_RGB32)
+        fract_img = QImage(self.f_width, self.f_height, QImage.Format_RGB32)
         for x in range(self.f_width):
             for y in range(self.f_height):
-                # print(self.palette.get_color(passmap[y, x]))
-                qImg.setPixelColor(x, y, self.palette.get_color(passmap[y, x]))
-        # https://stackoverflow.com/questions/14821878/cant-fill-qimage-via-setpixel-properly
+                fract_img.setPixelColor(x, y, self.palette.get_color(passmap[y, x]))
         
         # for debugging, the palette is drawn to pic:
         for i, color in enumerate(self.palette.palette_array):
             for j in range(1, 10):
-                qImg.setPixelColor(j, i, color)          
+                fract_img.setPixelColor(j, i, color)          
         
-        pixmap01 = QPixmap.fromImage(qImg)
-        pixmap_image = QPixmap(pixmap01)
-        self.setPixmap(pixmap_image)
+        self.setPixmap(QPixmap(QPixmap.fromImage(fract_img)))
         return None
-
 
     
 class Main_window(QMainWindow):
@@ -234,7 +202,7 @@ class Main_window(QMainWindow):
         self.max_i = (self.max_r-self.min_r)*1.0j + self.min_i
         self.frac_width = FRACTAL_WIDGET_WIDTH
         self.frac_height = FRACTAL_WIDGET_HEIGHT
-        print(self.min_r, self.max_r, self.min_i, self.max_i)
+        # print(self.min_r, self.max_r, self.min_i, self.max_i)
         
          # complex plane for math, numpy 2d array
         self.cplane = fractal_math.Complex_plane(self.min_r, self.max_r, self.min_i, self.max_i,
@@ -271,6 +239,7 @@ class Main_window(QMainWindow):
     def calc_button_clicked(self) -> None:
         """Activates when calculate button is pressed. Draws a new fractal image
         """        
+        self.infobar.setText("Starting fractal calculation") # for some reason, does not work
         # copy toolbar values to self.mins and self.maxs
         self.min_r = float(self.toolbar.rmin_entry.text())
         self.max_r = float(self.toolbar.rmax_entry.text())
@@ -278,8 +247,6 @@ class Main_window(QMainWindow):
         self.max_i = complex(self.toolbar.imax_entry_txt.text()) # imax = qlabel
         
         start = time.time() # start timing
-        self.infobar.setText("Starting fractal calculation")
-        print(f"Inside calc_button_clicked: frame {self.min_r} - {self.max_r} , {self.min_i} - {self.max_i} ")
         self.cplane = fractal_math.Complex_plane(self.min_r, self.max_r, self.min_i, self.max_i,
                                             self.frac_width, self.frac_height)
         self.fractal_image.update_fractal_picture(self.cplane.pass_map())

@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def iters_passed(c: np.complex128) -> int:
     """Returns number of iterations passed (= belongs to the Julia set). Currently func = c * c + Z,
     where c is the complex number argument and Z is the constant (0.25 + 0j)
@@ -24,7 +23,6 @@ def iters_passed(c: np.complex128) -> int:
             else:
                 return i
         return 255
-
 
 
 class Complex_plane():

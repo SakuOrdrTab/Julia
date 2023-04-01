@@ -15,7 +15,6 @@ from PySide6.QtGui import QColor
 #         return newcolor
 
 
-
 class Fractal_palette():
     """Class for palette for the fractal. Constructor creates the colours.
     """           
