@@ -1,2 +1,2 @@
 # Julia
-Fractals with pyside and numpy
+Fractals with pyside6 and numpy
