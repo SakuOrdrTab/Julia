@@ -23,7 +23,7 @@ i_max = (r_max-r_min)*1.0j + i_min # -> 2.0j
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    gui = Gui.Main_window(r_min, r_max, i_min, i_max, FRACTAL_WIDGET_WIDTH, FRACTAL_WIDGET_HEIGHT)
+    gui = Gui.MainWindow(r_min, r_max, i_min, i_max, FRACTAL_WIDGET_WIDTH, FRACTAL_WIDGET_HEIGHT)
     gui.show()
     app.exec()
     sys.exit(0)

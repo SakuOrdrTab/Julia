@@ -1,3 +1,7 @@
+'''
+Includes math for displaying fractals, including ComplexPlane class
+'''
+
 import numpy as np
 
 
@@ -25,7 +29,7 @@ def iters_passed(c: np.complex128) -> int:
         return 255
 
 
-class Complex_plane():
+class ComplexPlane():
     """Class for holding the complex plane to plot fractal from.
     """    
     def __init__(self, minr, maxr, mini, maxi, FRACTAL_WIDGET_WIDTH, FRACTAL_WIDGET_HEIGHT):

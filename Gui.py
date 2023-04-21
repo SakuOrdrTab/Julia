@@ -1,3 +1,7 @@
+'''
+Graphics Interface for the julia.py fractal program
+Classes: Toolbar, NumberInputBox, FractalQLabel, MainWindow
+'''
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, \
                             QPushButton, QLineEdit, QRubberBand
 from PySide6.QtGui import QImage, QPixmap
@@ -17,7 +21,7 @@ import fractal_palette
 # https://doc.qt.io/qtforpython-6.2/overviews/qtcore-threads-mandelbrot-example.html
 
 
-class Number_input_box(QLineEdit):
+class NumberInputBox(QLineEdit):
     """A QLineEdit box a bit narrower for input of floats for frame
     """    
     def __init__(self):
@@ -35,15 +39,15 @@ class Toolbar(QWidget):
         toolbar_layout = QHBoxLayout() # horizontal box
         
         toolbar_layout.addWidget(QLabel("R_min:")) 
-        self.rmin_entry = Number_input_box()
+        self.rmin_entry = NumberInputBox()
         toolbar_layout.addWidget(self.rmin_entry)
         
         toolbar_layout.addWidget(QLabel("R_max: "))
-        self.rmax_entry = Number_input_box()
+        self.rmax_entry = NumberInputBox()
         toolbar_layout.addWidget(self.rmax_entry)
         
         toolbar_layout.addWidget(QLabel("I_min: "))
-        self.imin_entry = Number_input_box()
+        self.imin_entry = NumberInputBox()
         toolbar_layout.addWidget(self.imin_entry)
         
         # max imag number not enterable, calculated from other three
@@ -61,7 +65,7 @@ class Toolbar(QWidget):
         return None
     
         
-class Fractal_QLabel(QLabel):
+class FractalQLabel(QLabel):
     """Class (QLabel) for displaying the fractal picture. Picture is passed as numpy 2d-array and
     stored as a QPixmap
     """    
@@ -75,7 +79,7 @@ class Fractal_QLabel(QLabel):
             infobar (QLabel): Infobar is passed for reference
         """        
         super().__init__()
-        self.palette = fractal_palette.Fractal_palette() # palette
+        self.palette = fractal_palette.FractalPalette() # palette
         self.toolbar = toolbar
         self.infobar = infobar
              
@@ -173,7 +177,7 @@ class Fractal_QLabel(QLabel):
         return None
 
     
-class Main_window(QMainWindow):
+class MainWindow(QMainWindow):
     """Main window class for GUI (QMainWindow)
 
     Args:
@@ -205,7 +209,7 @@ class Main_window(QMainWindow):
         # print(self.min_r, self.max_r, self.min_i, self.max_i)
         
          # complex plane for math, numpy 2d array
-        self.cplane = fractal_math.Complex_plane(self.min_r, self.max_r, self.min_i, self.max_i,
+        self.cplane = fractal_math.ComplexPlane(self.min_r, self.max_r, self.min_i, self.max_i,
                                             self.frac_width, self.frac_height)
         
         # Set all objects in Mainwindow: toolbar,infobar, fractal image
@@ -226,7 +230,7 @@ class Main_window(QMainWindow):
         self.toolbar.rmax_entry.setText(str(self.max_r.real))
         self.toolbar.rmin_entry.setText(str(self.min_r.real))
         
-        self.fractal_image = Fractal_QLabel(self.cplane.pass_map(), self.toolbar, self.infobar) # 2d numpy array of passes
+        self.fractal_image = FractalQLabel(self.cplane.pass_map(), self.toolbar, self.infobar) # 2d numpy array of passes
         self.fractal_image.set_complex_plane_values(self.min_r, self.max_r, self.min_i, self.max_i)
         
         window_layout.addWidget(self.fractal_image)
@@ -247,7 +251,7 @@ class Main_window(QMainWindow):
         self.max_i = complex(self.toolbar.imax_entry_txt.text()) # imax = qlabel
         
         start = time.time() # start timing
-        self.cplane = fractal_math.Complex_plane(self.min_r, self.max_r, self.min_i, self.max_i,
+        self.cplane = fractal_math.ComplexPlane(self.min_r, self.max_r, self.min_i, self.max_i,
                                             self.frac_width, self.frac_height)
         self.fractal_image.update_fractal_picture(self.cplane.pass_map())
         end = time.time() # finish timing

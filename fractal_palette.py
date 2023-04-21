@@ -1,3 +1,8 @@
+'''
+Includes FractalPalette class for dealing with fractal colours
+'''
+
+
 from PySide6.QtGui import QColor
 # import math
 # from numpy import complex128
@@ -15,7 +20,7 @@ from PySide6.QtGui import QColor
 #         return newcolor
 
 
-class Fractal_palette():
+class FractalPalette():
     """Class for palette for the fractal. Constructor creates the colours.
     """           
     def __init__(self):
@@ -52,7 +57,7 @@ class Fractal_palette():
 # for debugging:    
 if __name__ == "__main__":
     print("debug mode!")
-    palette = Fractal_palette()
+    palette = FractalPalette()
     print(palette.get_color(230))
 
 
